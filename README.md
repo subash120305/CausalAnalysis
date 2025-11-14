@@ -1,430 +1,300 @@
-# CausalBench - Interactive Causal Inference Platform
+# CausalBench
 
-**Production-ready tool for causal inference with 22 diverse datasets, intelligent validation, and automated insights.**
+A full end-to-end reproducible Python project demonstrating causal identification, estimation, discovery, and sensitivity analysis using DoWhy and EconML on standard causal ML benchmarks.
 
-Analyze cause-and-effect relationships using state-of-the-art methods (DoWhy, EconML) with an intuitive Streamlit interface.
+## Features
 
----
+- **Multiple Datasets**: IHDP, Twins, Sachs, ACIC, Lalonde
+- **Estimation Methods**: IPW, Propensity Score Matching, Doubly Robust, DML, DRLearner
+- **Discovery Methods**: PC, FCI, NOTEARS
+- **Reproducible**: Fixed random seeds, comprehensive logging
+- **Docker Support**: Fully containerized execution
+- **Headless Execution**: Notebooks can run without Jupyter interface
 
-## 🚀 Quick Start (60 Seconds)
+## Requirements
+
+- Python 3.10+ (3.10-3.12 recommended; 3.13 may have compatibility issues with some packages)
+- 8-16 GB RAM (no GPU required)
+- Internet connection for dataset downloads
+- Graphviz (optional, for DAG visualization): Download from https://graphviz.org/download/
+
+## Installation
+
+### Option 1: Conda (Recommended)
 
 ```bash
-# 1. Install dependencies
-pip install -r requirements.txt
-
-# 2. Launch app
-streamlit run app.py
-
-# 3. Browse to http://localhost:8501
+conda env create -f environment.yml
+conda activate causalbench
 ```
 
-**That's it!** All 22 datasets are ready to use. Upload your own data or explore built-in datasets.
+### Option 2: pip
 
----
-
-## ✨ Key Features
-
-- **📊 22 Diverse Datasets** - Healthcare, Finance, Education, E-Commerce, and more
-- **🆕 Upload Any Dataset** - CSV, Excel with intelligent validation
-- **🤖 Auto-Detects Columns** - Finds treatment, outcome, confounders automatically
-- **💾 Smart Caching** - Analyzed datasets saved for instant recall
-- **🔬 5 Estimation Methods** - IPW, PSM, Doubly Robust, DML, DRLearner
-- **📈 Real-Time Visualization** - ATE charts, distributions, comparisons
-- **🧠 Intelligent Insights** - Identifies key factors, target groups, actionable recommendations
-- **📝 Rich Metadata** - Every dataset has detailed column descriptions
-- **🎯 Production-Ready** - Reproducible, tested, documented
-
----
-
-## 📊 Built-in Datasets (22 Total)
-
-### 🌐 Real Datasets from Online Sources (10)
-
-1. **IHDP** (Healthcare) - 747 rows
-   - Infant Health and Development Program
-   - Treatment: Specialist home visits → Outcome: Cognitive scores
-
-2. **LaLonde** (Economics) - 445 rows
-   - Job Training Study (NSW)
-   - Treatment: Job training → Outcome: 1978 earnings
-
-3. **Adult Income** (Social Science) - 32,561 rows
-   - Census data
-   - Treatment: College education → Outcome: High income (>$50K)
-
-4. **Student Performance** (Education) - 395 rows
-   - Portuguese secondary school
-   - Treatment: Paid tutoring → Outcome: Math grades
-
-5. **Heart Disease** (Healthcare) - 297 rows
-   - Cleveland Clinic data
-   - Treatment: Exercise-induced angina → Outcome: Heart disease
-
-6. **Bank Marketing** (Marketing) - 5,000 rows
-   - Portuguese bank telemarketing
-   - Treatment: Cellular contact → Outcome: Term deposit subscription
-
-7. **Wine Quality** (Food Science) - 1,599 rows
-   - Portuguese red wine
-   - Treatment: High sulphates → Outcome: Quality rating
-
-8. **Communities & Crime** (Social Policy) - 1,993 rows
-   - US communities data
-   - Treatment: Immigration levels → Outcome: Crime rates
-
-9. **Bike Sharing** (Transportation) - 731 rows
-   - Capital Bikeshare (DC)
-   - Treatment: Working day → Outcome: Rental demand
-
-10. **Energy Efficiency** (Energy) - 768 rows
-    - Building simulations
-    - Treatment: Glazing area → Outcome: Heating load
-
-### 🎲 High-Quality Synthetic Datasets (12)
-
-Generated with realistic relationships and known treatment effects:
-
-11. **Healthcare Hypertension** - 800 patients | ATE: -12 mmHg
-12. **E-Commerce Recommendations** - 1,200 users | ATE: +$28
-13. **Education Online Learning** - 950 students | ATE: +7.5 points
-14. **Finance Credit Card** - 1,100 customers | ATE: +15%
-15. **HR Remote Work** - 650 employees | ATE: +0.8 satisfaction
-16. **Agriculture Fertilizer** - 500 farms | ATE: +450 kg/hectare
-17. **Transportation Ride Share** - 2,000 rides | ATE: +18%
-18. **Social Media Moderation** - 1,500 users | ATE: +8% retention
-19. **Energy Smart Thermostat** - 850 households | ATE: -180 kWh
-20. **Retail Store Layout** - 380 stores | ATE: +12% sales
-21. **Telecom 5G Upgrade** - 1,000 customers | ATE: +1.2 satisfaction
-22. **Public Health Vaccination** - 1,200 participants | ATE: +22% vaccination
-
----
-
-## 📁 Dataset Structure
-
-Every dataset has its own folder with full documentation:
-
-```
-data/
-  ihdp/
-    - ihdp.csv           # The actual data
-    - README.md          # Column descriptions, usage examples
-  lalonde/
-    - lalonde.csv
-    - README.md
-  ... (20 more folders)
-```
-
-**Each README includes:**
-- Description and source
-- Column explanations (what each variable means)
-- Value ranges, types, and units
-- Impact descriptions (how columns affect outcome)
-- Copy-paste usage examples
-
----
-
-## 📋 Dataset Requirements (Upload Your Own)
-
-Your data needs:
-
-1. **Treatment** (REQUIRED) - Binary column (0/1, Yes/No)
-2. **Outcome** (REQUIRED) - Continuous or binary measurement
-3. **Confounders** (RECOMMENDED) - Variables affecting both treatment and outcome
-4. **Sample Size** (RECOMMENDED) - 100+ observations, 30+ per treatment group
-
-**Example:**
-```csv
-customer_id,email_sent,age,prior_purchases,purchase_amount
-1,1,25,5,120.50
-2,0,30,3,0.00
-3,1,35,2,89.00
-```
-
-System auto-detects: Treatment=`email_sent`, Outcome=`purchase_amount`, Confounders=`age`,`prior_purchases`
-
----
-
-## 🎯 Common Use Cases
-
-| Domain | Question | Treatment | Outcome |
-|--------|----------|-----------|---------|
-| **Healthcare** | Does Drug X work? | `received_drug` | `recovery_days` |
-| **Marketing** | Do emails increase sales? | `email_sent` | `purchase_amount` |
-| **Education** | Does tutoring help? | `tutoring` | `final_score` |
-| **Policy** | Does training increase earnings? | `job_training` | `annual_salary` |
-| **E-Commerce** | Do recommendations work? | `ai_recommendations` | `purchases` |
-| **HR** | Does remote work improve satisfaction? | `remote_work` | `job_satisfaction` |
-
----
-
-## 💡 How It Works
-
-### 1. Upload → 2. Validate → 3. Analyze → 4. Get Insights
-
-```
-Upload CSV
-    ↓
-System checks: "Is this suitable for causal inference?"
-    ↓ YES (Confidence: 90%)
-Auto-detects: Treatment, Outcome, Confounders
-    ↓
-You choose methods: IPW, PSM, DML
-    ↓
-Run Analysis (30-60s)
-    ↓
-Results: "Email campaign increases purchases by $15.17"
-    ↓
-Intelligent Insights: Key factors, target groups, recommendations
-    ↓
-Cached for instant recall next time!
-```
-
----
-
-## 📊 Understanding Results
-
-**ATE (Average Treatment Effect)**
-
-- **Positive (+$1,800)** → Treatment INCREASES outcome by $1,800
-- **Negative (-3.2 days)** → Treatment DECREASES outcome by 3.2 days
-- **Near-zero (+$0.50)** → Minimal effect, may not be cost-effective
-
-**Confidence**
-
-- **All methods agree** (IPW≈PSM≈DML) → ✅ High confidence, robust
-- **Methods disagree** (IPW=$20, DML=$5) → ⚠️ Trust most robust (DML)
-
----
-
-## 🧠 Intelligent Insights (NEW!)
-
-After analysis, CausalBench automatically provides:
-
-### 📈 Treatment Effect Interpretation
-Plain English explanation:
-> "The treatment 'job_training' increases 'annual_salary' by $1,800 on average. This is a moderate positive effect."
-
-### 🔑 Key Factors Affecting Outcome
-Identifies which variables matter most:
-- **education** (correlation: 0.58) - Higher education predicts better outcomes
-- **prior_income** (correlation: 0.39) - Prior earnings influence results
-- Shows treated vs control group differences
-
-### ⚠️ Risk & Success Factors
-- **Success Factors**: Variables that promote positive outcomes (↑)
-- **Risk Factors**: Variables associated with worse outcomes (↓)
-
-### 🎯 Who Benefits Most?
-Identifies target groups with heterogeneous treatment effects:
-> "Treatment is most effective for: Higher education (effect: $2,500 vs $900 for lower)"
-
-### 💡 Actionable Recommendations
-Data-driven suggestions:
-- ✓ **IMPLEMENT**: "Treatment shows positive impact. Consider scaling up."
-- ✓ **PRIORITIZE**: "Focus on higher education candidates."
-- ✓ **LEVERAGE**: "Screen for success factors."
-- ✓ **MEASURE ROI**: "Effect size is $1,800. Compare against cost."
-
-**Example Output:**
-```
-📊 EXECUTIVE SUMMARY
-Decision: RECOMMEND
-Reason: job_training increases earnings by $1,077
-
-Confidence: HIGH - All methods agree closely (±15%)
-
-Top Actions:
-  1. ✓ IMPLEMENT: Training shows positive impact.
-  2. ✓ PRIORITIZE: Focus on higher education candidates.
-```
-
----
-
-## 🐛 Troubleshooting
-
-### "Streamlit command not found"
-```bash
-python -m streamlit run app.py
-```
-
-### "No module named 'dowhy'"
 ```bash
 pip install -r requirements.txt
 ```
 
-### "Dataset not suitable"
-- **Missing treatment?** Add binary column (0/1)
-- **Too small?** Need 100+ rows
-- **Multi-valued treatment?** Recode as binary
+**Note**: If you encounter installation errors on Python 3.13, try using Python 3.10-3.12, or install packages individually to identify problematic ones.
 
-### "Analysis failed"
-- Remove missing values
-- Ensure treatment is 0/1 (not strings)
-- Check group sizes (need 30+ per group)
-- Try different estimator (DML is most robust)
-
----
-
-## 💻 Command Line Usage
+### Option 3: Docker
 
 ```bash
-# Run single dataset
-python -m src.dowhy_pipeline --dataset ihdp --estimator ipw psm dml
-
-# Quick test with sampling
-python -m src.dowhy_pipeline --dataset ihdp --sample 500
+docker build -t causalbench .
+docker run -v $(pwd)/results:/app/results causalbench
 ```
 
-**Python API:**
+## Quick Start
+
+### Run a Single Dataset
+
+```bash
+# Run IHDP with default estimators
+python -m src.dowhy_pipeline --dataset ihdp --estimator ipw psm dr dml
+
+# Run with sampling for quick tests (1000 rows)
+python -m src.dowhy_pipeline --dataset twins --sample 1000 --estimator ipw psm
+
+# Run all estimators on Lalonde
+python -m src.dowhy_pipeline --dataset lalonde --estimator ipw psm dr dml drlearner
+```
+
+### Run All Notebooks
+
+```bash
+# Execute all notebooks headlessly
+bash scripts/run_all.sh
+```
+
+This will:
+1. Execute all notebooks in `notebooks/`
+2. Save results to `results/`
+3. Generate summary PDF at `results/summary.pdf`
+4. Create archive at `output/causalbench.zip`
+
+## Project Structure
+
+```
+CausalBench/
+├── src/
+│   ├── data_loader.py      # Dataset download & validation
+│   ├── dag_builder.py       # DAG visualization utilities
+│   ├── dowhy_pipeline.py    # Main DoWhy pipeline
+│   ├── econml_estimators.py # EconML wrappers (DML, DRLearner)
+│   ├── discovery.py         # Causal discovery (PC, FCI, NOTEARS)
+│   ├── metrics.py           # Evaluation metrics (ATE-RMSE, PEHE)
+│   └── viz.py               # Plotting utilities
+├── notebooks/
+│   ├── notebook_ihdp.ipynb
+│   ├── notebook_twins.ipynb
+│   ├── notebook_sachs.ipynb
+│   ├── notebook_acic.ipynb
+│   └── notebook_lalonde.ipynb
+├── scripts/
+│   ├── run_all.sh           # Headless notebook execution
+│   └── generate_summary.py  # Summary PDF generation
+├── tests/
+│   ├── test_data_loader.py
+│   └── test_dowhy_pipeline.py
+├── data/                     # Downloaded datasets
+├── results/                  # Output directory
+├── Dockerfile
+├── environment.yml
+├── requirements.txt
+└── README.md
+```
+
+## Datasets
+
+### IHDP (Infant Health and Development Program)
+- **Type**: Semi-synthetic observational study
+- **Features**: 25 confounders, binary treatment, continuous outcome
+- **Ground Truth**: Available (semi-synthetic)
+
+### Twins
+- **Type**: Processed twins benchmark
+- **Source**: DoWhy built-in dataset
+- **Features**: Multiple confounders, treatment effect on mortality
+
+### Sachs
+- **Type**: Protein signaling network
+- **Purpose**: Causal discovery (DAG inference)
+- **Ground Truth**: Known protein interaction network
+
+### ACIC (Atlantic Causal Inference Conference)
+- **Type**: Synthetic benchmark datasets
+- **Year**: 2019 challenge data
+- **Note**: May require manual download from official challenge page
+
+### Lalonde
+- **Type**: Policy evaluation (NSW job training program)
+- **Source**: Dehejia-Wahba (1999)
+- **Features**: Observational data with treatment/control groups
+
+## Methods
+
+### Estimation
+- **IPW (Inverse Propensity Weighting)**: `backdoor.propensity_score_weighting`
+- **PSM (Propensity Score Matching)**: `backdoor.propensity_score_matching`
+- **Doubly Robust**: `backdoor.econometric.doubly_robust`
+- **DML (Double Machine Learning)**: EconML `LinearDML`
+- **DRLearner**: EconML `DRLearner`
+
+### Discovery
+- **PC Algorithm**: Constraint-based (causal-learn)
+- **FCI**: Fast Causal Inference with latent confounders
+- **NOTEARS**: Continuous optimization for DAG learning
+
+## Usage Examples
+
+### Command-Line Interface
+
+```bash
+# Basic usage
+python -m src.dowhy_pipeline --dataset ihdp
+
+# With specific estimators
+python -m src.dowhy_pipeline --dataset twins --estimator ipw psm dr
+
+# Quick run with sampling
+python -m src.dowhy_pipeline --dataset lalonde --sample 500
+
+# Custom output directory
+python -m src.dowhy_pipeline --dataset ihdp --output-dir ./my_results
+```
+
+### Python API
+
 ```python
 from src.dowhy_pipeline import run_full_pipeline
+from pathlib import Path
 
-results = run_full_pipeline("ihdp", estimators=["ipw", "dml"])
-print(results)
-```
-
----
-
-## 📚 API Reference
-
-### Load Datasets
-```python
-from src.data_loader_new import get_available_datasets, load_dataset, get_dataset_config
-
-# List all datasets
-datasets = get_available_datasets()
-for name, info in datasets.items():
-    print(f"{name}: {info['display_name']} ({info['size']})")
-
-# Load a dataset
-df = load_dataset('ihdp')  # Full dataset
-df = load_dataset('ihdp', sample=500)  # Sample 500 rows
-
-# Get configuration
-config = get_dataset_config('ihdp')
-print(f"Treatment: {config['treatment']}")
-print(f"Outcome: {config['outcome']}")
-print(f"Confounders: {config['confounders']}")
-```
-
-### Run Causal Analysis
-```python
-from src.dowhy_pipeline import run_full_pipeline
-
-# Run multiple estimators
 results = run_full_pipeline(
-    'ihdp',
-    estimators=['ipw', 'psm', 'dml'],
-    sample=500
+    dataset_name="ihdp",
+    estimators=["ipw", "psm", "dr", "dml"],
+    sample=1000,  # Optional: reduce dataset size
+    output_dir=Path("results"),
+    random_state=42
 )
+
 print(results)
 ```
 
-### Generate Insights
-```python
-from src.intelligent_insights import generate_insights, format_insights_for_display
+### Causal Discovery (Sachs)
 
-insights = generate_insights(
-    data=df,
-    treatment_col='treatment',
-    outcome_col='outcome',
-    confounders=['age', 'education'],
-    ate_result=1234.56,
-    estimator_results={'ipw': 1200, 'psm': 1250, 'dml': 1240}
+```python
+from src.discovery import compare_discovery_methods
+import pandas as pd
+
+data = pd.read_csv("data/sachs/sachs_data.csv")
+results = compare_discovery_methods(
+    data,
+    methods=["pc", "fci", "notears"],
+    output_dir=Path("results/sachs")
 )
-
-# Display formatted insights
-print(format_insights_for_display(insights))
 ```
 
-### Analyze Custom Dataset
-```python
-from src.column_analyzer import analyze_all_columns, format_column_analysis_for_display
+## Output
 
-# Analyze uploaded data
-column_analysis = analyze_all_columns(df, dataset_name='my_data')
+After running `scripts/run_all.sh`, you'll find:
 
-# Display analysis
-print(format_column_analysis_for_display(column_analysis))
+- `results/<dataset>/estimators_summary.csv` - ATE estimates and runtimes
+- `results/<dataset>/sample_plots/` - Visualizations (ATE comparison, ITE scatter)
+- `results/sachs/discovery_precision_recall.csv` - Discovery metrics
+- `results/sachs/sample_plots/*.png` - Discovered DAG visualizations
+- `results/summary.pdf` - Auto-generated summary report
+- `results/logs.txt` - Execution logs with timestamps
+- `data/link_checks.json` - URL status for all dataset links
+
+## Testing
+
+Run the test suite:
+
+```bash
+# Run all tests
+python -m pytest -v tests/
+
+# Run specific test
+python -m pytest tests/test_data_loader.py -v
+
+# With coverage
+python -m pytest --cov=src tests/
 ```
 
----
+## Reproducibility
 
-## 🔬 Estimation Methods Explained
+- **Random Seed**: Fixed to 42 throughout
+- **Environment**: Locked Python 3.10 + requirements versions
+- **Logging**: All operations logged with timestamps
+- **Validation**: Schema checks for downloaded datasets
+- **Provenance**: README.txt saved in each dataset directory with URL and timestamp
 
-### 1. IPW (Inverse Propensity Weighting)
-- Reweights observations by probability of treatment
-- Fast but sensitive to extreme propensity scores
-- **Use when**: Large sample, good overlap
+## Troubleshooting
 
-### 2. PSM (Propensity Score Matching)
-- Matches treated units with similar controls
-- Intuitive "apples to apples" comparison
-- **Use when**: Want matched pairs, medium sample
+### Dataset Download Fails
 
-### 3. Doubly Robust (DR)
-- Combines propensity scores with outcome regression
-- Correct if either model is right
-- **Use when**: Want extra robustness
+1. Check `data/link_checks.json` for URL status
+2. Check `results/logs.txt` for detailed error messages
+3. For Kaggle datasets, set `KAGGLE_USERNAME` and `KAGGLE_KEY` environment variables
+4. Some datasets (e.g., ACIC) may require manual download from official sources
 
-### 4. DML (Double Machine Learning)
-- Uses ML for both propensity and outcome
-- Reduces bias, handles complex relationships
-- **Use when**: Large sample, complex confounding
+### Memory Issues
 
-### 5. DRLearner
-- Combines doubly robust with ML
-- Most flexible, handles heterogeneity
-- **Use when**: Expect treatment effects vary by subgroup
+Use the `--sample` flag to reduce dataset size:
 
----
+```bash
+python -m src.dowhy_pipeline --dataset ihdp --sample 1000
+```
 
-## 📖 Learn More
+### Graphviz Errors
 
-- **Individual Dataset READMEs**: See `data/*/README.md` for specific dataset details
-- **PYTHON_VERSION_NOTES.md**: Python compatibility information
-- **START_HERE.txt**: 60-second quick start guide
+On Linux:
+```bash
+sudo apt-get install graphviz
+```
 
----
+On macOS:
+```bash
+brew install graphviz
+```
 
-## 🤝 Contributing
+On Windows: Install Graphviz from https://graphviz.org/
 
-Want to add a dataset?
+## Performance Notes
 
-1. Create folder: `data/your_dataset/`
-2. Add CSV: `data/your_dataset/your_dataset.csv`
-3. Create README with column descriptions
-4. Update `data/dataset_metadata.json`
+- **CPU-only**: No GPU required
+- **Sampling**: Use `--sample` for quick runs on large datasets
+- **Parallel Execution**: Notebooks run sequentially to avoid conflicts
+- **Caching**: Datasets are cached in `data/` after first download
 
----
+## Citation
 
-## 📄 License
+If you use CausalBench in your research, please cite:
 
-This project is for educational and research purposes. Individual datasets retain their original licenses.
+```bibtex
+@software{causalbench2024,
+  title={CausalBench: Reproducible Causal Inference Pipelines},
+  author={},
+  year={2024},
+  url={https://github.com/subash120305/CausalBench}
+}
+```
 
----
+## License
 
-## 🙏 Acknowledgments
+MIT License - see LICENSE file for details.
 
-**Real Datasets from:**
-- UCI Machine Learning Repository
-- NBER / Academic Research (LaLonde, IHDP)
-- Public Health Studies
+## Contributing
 
-**Built with:**
-- [DoWhy](https://microsoft.github.io/dowhy/) - Microsoft's causal inference library
-- [EconML](https://econml.azurewebsites.net/) - Econometric ML library
-- [Streamlit](https://streamlit.io/) - Interactive web interface
-- [pandas](https://pandas.pydata.org/), [numpy](https://numpy.org/), [scikit-learn](https://scikit-learn.org/)
+1. Fork the repository
+2. Create a feature branch
+3. Make changes with tests
+4. Submit a pull request
 
----
+## Acknowledgments
 
-## 📞 Support
+- DoWhy (https://www.pywhy.org/)
+- EconML (https://econml.azurewebsites.net/)
+- Causal-learn (https://github.com/py-why/causal-learn)
 
-- **Documentation**: This README + individual dataset READMEs
-- **Issues**: GitHub Issues
-- **Questions**: Check troubleshooting section above
+## Contact
 
----
-
-**You're ready! Launch the app and explore causal inference with 22 diverse datasets! 🚀**
+For issues or questions, please open an issue on GitHub.
