@@ -10,7 +10,11 @@
       "Bash(findstr:*)",
       "Bash(taskkill:*)",
       "Bash(del test_insights.py test_insights_output.txt)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(dir:*)",
+      "Bash(curl:*)",
+      "Bash(unzip:*)",
+      "Bash(cp:*)"
     ],
     "deny": [],
     "ask": []
